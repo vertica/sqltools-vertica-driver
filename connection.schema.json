@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "database": {
+      "title": "Database name",
+      "type": "string",
+      "minLength": 1
+    },
+    "user": {
+      "title": "Username",
+      "type": "string",
+      "minLength": 1
+    },
+    "host": {
+      "title": "Hostname",
+      "type": "string",
+      "minLength": 1
+    },
+    "port": {
+      "title": "Vertica Port",
+      "type": "number"
+    }
+  }
+}
