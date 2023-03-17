@@ -69,7 +69,7 @@ SELECT
   'view' AS description,
   ('"' || V.TABLE_SCHEMA || '"."' || V.TABLE_NAME || '"') as detail
 FROM V_CATALOG.VIEWS as V
-WHERE
+WHERE 1=1
   ${p => p.search ? `AND (
     (schema || '.' || lable) ILIKE '%${p.search}%'
     OR ('"' || schema || '"."' || lable || '"') ILIKE '%${p.search}%'

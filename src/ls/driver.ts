@@ -134,7 +134,7 @@ export default class VerticaSQL extends AbstractDriver<DriverLib, DriverOptions>
   public getStaticCompletions = async () => {
     if (this.completionsCache) return this.completionsCache;
     this.completionsCache = {};
-    const items = await this.queryResults('SELECT UPPER(word) AS label, UPPER(catdesc) AS desc FROM pg_get_keywords();');
+    const items = await this.queryResults('SELECT UPPER(keyword) AS label, UPPER(reserved) AS reserverd FROM keywords;');
 
     items.forEach((item: any) => {
       this.completionsCache[item.label] = {
@@ -143,7 +143,7 @@ export default class VerticaSQL extends AbstractDriver<DriverLib, DriverOptions>
         filterText: item.label,
         sortText: (['SELECT', 'CREATE', 'UPDATE', 'DELETE'].includes(item.label) ? '2:' : '') + item.label,
         documentation: {
-          value: `\`\`\`yaml\nWORD: ${item.label}\nTYPE: ${item.desc}\n\`\`\``,
+          value: `\`\`\`yaml\nWORD: ${item.label}\nRESERVED: ${item.reserverd}\n\`\`\``,
           kind: 'markdown'
         }
       }
