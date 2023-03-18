@@ -37,8 +37,6 @@
   "dependencies": {
     "@sqltools/base-driver": "latest",
     "@sqltools/types": "latest",
-    "lodash": "^4.17.21",
-    "pg": "^8.9.0",
     "tsc": "^2.0.4",
     "typecript": "^0.0.1-security",
     "uuid": "^7.0.3",
