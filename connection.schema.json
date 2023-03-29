@@ -12,6 +12,11 @@
       "type": "string",
       "minLength": 1
     },
+    "password": {
+      "title": "Password",
+      "type": "string",
+      "minLength": 0
+    },
     "host": {
       "title": "Hostname",
       "type": "string",
