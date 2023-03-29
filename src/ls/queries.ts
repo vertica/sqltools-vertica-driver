@@ -61,7 +61,7 @@ SELECT
 FROM V_CATALOG.TABLES AS T
 UNION
 SELECT
-  V.TABLE_NAME AS lable,
+  V.TABLE_NAME AS label,
   '${ContextValue.VIEW}' AS type,
   V.TABLE_SCHEMA AS schema,
   '${p => p.database}' AS database,
@@ -71,8 +71,8 @@ SELECT
 FROM V_CATALOG.VIEWS as V
 WHERE 1=1
   ${p => p.search ? `AND (
-    (schema || '.' || lable) ILIKE '%${p.search}%'
-    OR ('"' || schema || '"."' || lable || '"') ILIKE '%${p.search}%'
+    (schema || '.' || label) ILIKE '%${p.search}%'
+    OR ('"' || schema || '"."' || label || '"') ILIKE '%${p.search}%'
     OR label ILIKE '%${p.search}%'
   )` : ''}
 ORDER BY
@@ -156,10 +156,10 @@ SELECT
   'group-by-ref-type' as "iconId",
   '${p => p.database}' as database
 FROM V_CATALOG.SCHEMATA
-WHERE
+  WHERE
   IS_SYSTEM_SCHEMA = 'f'
-`;
-
+  `;
+ 
 export default {
   describeTable,
   countRecords,
