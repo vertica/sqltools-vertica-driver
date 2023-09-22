@@ -1,23 +1,32 @@
 {
   "name": "sqltools-vertica-driver",
   "displayName": "SQLTools Vertica driver",
-  "description": "VSCode SQLTools extension Vertica driver",
+  "description": "SQLTools Driver for Vertica",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.42.0"
   },
   "publisher": "Vertica",
-  "license": "Apache",
-  "repository": {},
-  "bugs": {},
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vertica/sqltools-vertica-driver.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vertica/sqltools-vertica-driver/issues"
+  },
+  "icon": "vertica-logo.png",
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./"
   },
   "keywords": [
-    "driver-template",
-    "sqltools-driver"
+    "vertica",
+    "sql",
+    "dbsql",
+    "sqltools-driver",
+    "data warehouse"
   ],
   "categories": [
     "Programming Languages",
@@ -37,8 +46,6 @@
   "dependencies": {
     "@sqltools/base-driver": "latest",
     "@sqltools/types": "latest",
-    "tsc": "^2.0.4",
-    "typecript": "^0.0.1-security",
     "uuid": "^7.0.3",
     "vertica-nodejs": "^1.0.2"
   },
