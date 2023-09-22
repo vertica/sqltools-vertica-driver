@@ -7,7 +7,7 @@
     "vscode": "^1.42.0"
   },
   "publisher": "Vertica",
-  "license": "Apache",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/vertica/sqltools-vertica-driver.git"
@@ -15,6 +15,7 @@
   "bugs": {
     "url": "https://github.com/vertica/sqltools-vertica-driver/issues"
   },
+  "icon": "vertica-logo.png",
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
@@ -45,8 +46,6 @@
   "dependencies": {
     "@sqltools/base-driver": "latest",
     "@sqltools/types": "latest",
-    "tsc": "^2.0.4",
-    "typecript": "^0.0.1-security",
     "uuid": "^7.0.3",
     "vertica-nodejs": "^1.0.2"
   },
