@@ -2,21 +2,24 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "host": {
+    "server": {
       "title": "Server Address",
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "default": "localhost"
     },
     "port": {
       "title": "Port",
-      "type": "number"
+      "type": "number",
+      "minimum": 1,
+      "default": 5433
     },
     "database": {
       "title": "Database",
       "type": "string",
       "minLength": 1
     },
-    "user": {
+    "username": {
       "title": "Username",
       "type": "string",
       "minLength": 1
@@ -28,8 +31,8 @@
     }
   },
   "required": [
-    "host",
+    "server",
     "port",
-    "user"
+    "username"
   ]
 }

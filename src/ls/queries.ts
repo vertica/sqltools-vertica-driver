@@ -125,7 +125,10 @@ FROM V_CATALOG.tables AS T
 WHERE
   T.TABLE_SCHEMA = '${p => p.schema}'
   AND T.IS_SYSTEM_TABLE = 'f'
+ORDER BY
+  T.TABLE_NAME
 `;
+// SELECT * FROM v_catalog.system_tables ORDER BY table_schema, table_name
 
 const fetchViews: IBaseQueries['fetchTables'] = queryFactory`
 SELECT
@@ -138,6 +141,8 @@ FROM V_CATALOG.views AS V
 WHERE
   V.TABLE_SCHEMA = '${p => p.schema}'
   AND V.IS_SYSTEM_VIEW = 'f'
+ORDER BY
+  V.TABLE_NAME
 `;
 
 const fetchDatabases: IBaseQueries['fetchDatabases'] = queryFactory`
@@ -156,9 +161,11 @@ SELECT
   'group-by-ref-type' as "iconId",
   '${p => p.database}' as database
 FROM V_CATALOG.SCHEMATA
-  WHERE
+WHERE
   IS_SYSTEM_SCHEMA = 'f'
+ORDER BY schema_name
   `;
+// OR schema_name in ('v_catalog', 'v_monitor')
  
 export default {
   describeTable,
