@@ -1,4 +1,5 @@
 {
-  "ui:order": ["server", "port", "database", "username", "password"],
-  "password": { "ui:widget": "password" }
+  "ui:order": ["server", "port", "database", "username", "usePassword", "password"],
+  "password": { "ui:widget": "password" },
+  "askForPassword": { "ui:widget": "hidden" }
 }

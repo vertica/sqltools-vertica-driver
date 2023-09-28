@@ -24,15 +24,72 @@
       "type": "string",
       "minLength": 1
     },
-    "password": {
-      "title": "Password",
+    "usePassword": {
+      "title": "Use password",
       "type": "string",
-      "minLength": 0
+      "enum": [
+        "SQLTools Driver Credentials",
+        "Ask on connect",
+        "Use empty password",
+        "Save as plaintext in settings"
+      ],
+      "default": "SQLTools Driver Credentials"
     }
   },
   "required": [
     "server",
     "port",
     "username"
-  ]
+  ],
+  "dependencies": {
+    "usePassword": {
+      "oneOf": [
+        {
+          "properties": {
+            "usePassword": {
+              "enum": [
+                "Ask on connect"
+              ]
+            },
+            "askForPassword": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        {
+          "properties": {
+            "usePassword": {
+              "enum": [
+                "Use empty password"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "usePassword": {
+              "enum": [
+                "Save as plaintext in settings"
+              ]
+            },
+            "password": {
+              "title": "Password",
+              "type": "string",
+              "minLength": 0
+            }
+          }
+        },
+        {
+          "properties": {
+            "usePassword": {
+              "enum": [
+                "SQLTools Driver Credentials"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
 }
