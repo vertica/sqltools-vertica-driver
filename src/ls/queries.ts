@@ -50,30 +50,28 @@ FROM ${p => escapeTableName(p.table)};
 `;
 
 const searchTables: IBaseQueries['searchTables'] = queryFactory`
-SELECT
-  T.TABLE_NAME AS label,
-  '${ContextValue.TABLE}' AS type,
-  T.TABLE_SCHEMA AS schema,
-  '${p => p.database}' AS database,
-  FALSE AS "isView",
-  'table' AS description,
-  ('"' || T.TABLE_SCHEMA || '"."' || T.TABLE_NAME || '"') as detail
-FROM V_CATALOG.TABLES AS T
-UNION
-SELECT
-  V.TABLE_NAME AS label,
-  '${ContextValue.VIEW}' AS type,
-  V.TABLE_SCHEMA AS schema,
-  '${p => p.database}' AS database,
-  TRUE AS "isView",
-  'view' AS description,
-  ('"' || V.TABLE_SCHEMA || '"."' || V.TABLE_NAME || '"') as detail
-FROM V_CATALOG.VIEWS as V
-WHERE 1=1
-  ${p => p.search ? `AND (
-    (schema || '.' || label) ILIKE '%${p.search}%'
-    OR ('"' || schema || '"."' || label || '"') ILIKE '%${p.search}%'
-    OR label ILIKE '%${p.search}%'
+SELECT U.*, D.database_name AS database
+  FROM (SELECT
+    T.TABLE_NAME AS label,
+    '${ContextValue.TABLE}' AS type,
+    T.TABLE_SCHEMA AS schema,
+    FALSE AS "isView",
+    'table' AS description,
+    ('"' || T.TABLE_SCHEMA || '"."' || T.TABLE_NAME || '"') as detail
+    FROM V_CATALOG.TABLES AS T
+  UNION
+    SELECT
+      V.TABLE_NAME AS label,
+      '${ContextValue.VIEW}' AS type,
+      V.TABLE_SCHEMA AS schema,
+      TRUE AS "isView",
+      'view' AS description,
+      ('"' || V.TABLE_SCHEMA || '"."' || V.TABLE_NAME || '"') as detail
+    FROM V_CATALOG.VIEWS as V
+) AS U, V_CATALOG.DATABASES AS D
+${p => p.search ? `WHERE (
+    U.label ILIKE '%${p.search}%'
+    OR U.schema ILIKE '%${p.search}%'
   )` : ''}
 ORDER BY
   label
