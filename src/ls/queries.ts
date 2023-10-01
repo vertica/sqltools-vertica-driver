@@ -3,11 +3,11 @@ import escapeTableName from '../escape-table';
 import { IBaseQueries, ContextValue } from '@sqltools/types';
 
 const describeTable: IBaseQueries['describeTable'] = queryFactory`
-SELECT * FROM V_CATALOG.COLUMNS
+SELECT * FROM
+  ${p => p.isView ? `V_CATALOG.VIEW_COLUMNS` : `V_CATALOG.COLUMNS`}
 WHERE
   TABLE_NAME = '${p => p.label}'
   AND TABLE_SCHEMA = '${p => p.schema}'
-  AND IS_SYSTEM_TABLE = 'f'
 `;
 
 const fetchColumns: IBaseQueries['fetchColumns'] = queryFactory`
@@ -16,20 +16,16 @@ SELECT
   '${ContextValue.COLUMN}' as type,
   C.TABLE_NAME AS table,
   C.DATA_TYPE AS "dataType",
-  UPPER(C.DATA_TYPE || (
-    CASE WHEN C.CHARACTER_MAXIMUM_LENGTH > 0 THEN (
-      '(' || C.CHARACTER_MAXIMUM_LENGTH || ')'
-    ) ELSE '' END
-  )) AS "detail",
+  UPPER(C.DATA_TYPE) AS "detail",
   C.CHARACTER_MAXIMUM_LENGTH::INT AS size,
   '${p => p.database}' AS database,
   C.TABLE_SCHEMA AS schema,
-  C.COLUMN_DEFAULT AS "defaultValue",
-  C.IS_NULLABLE AS "isNullable",
+  ${p => p.isView ? `NULL` : `C.COLUMN_DEFAULT`} AS "defaultValue",
+  ${p => p.isView ? `NULL` : `C.IS_NULLABLE`} AS "isNullable",
   false as "isPk",
   false as "isFk"
 FROM
-  V_CATALOG.COLUMNS C
+  ${p => p.isView ? `V_CATALOG.VIEW_COLUMNS` : `V_CATALOG.COLUMNS`} C
 WHERE
   C.TABLE_SCHEMA = '${p => p.schema}'
   AND C.TABLE_NAME = '${p => p.label}'
@@ -38,12 +34,14 @@ ORDER BY
   C.ORDINAL_POSITION
 `;
 
+// apply to both tables and views
 const fetchRecords: IBaseQueries['fetchRecords'] = queryFactory`
 SELECT *
 FROM ${p => escapeTableName(p.table)}
 LIMIT ${p => p.limit || 50}
 OFFSET ${p => p.offset || 0};
 `;
+// apply to both tables and views
 const countRecords: IBaseQueries['countRecords'] = queryFactory`
 SELECT count(1) AS total
 FROM ${p => escapeTableName(p.table)};
@@ -151,6 +149,7 @@ SELECT
   'database' as "detail"
 FROM V_CATALOG.DATABASES
 `;
+
 const fetchSchemas: IBaseQueries['fetchSchemas'] = queryFactory`
 SELECT
   schema_name AS label,
@@ -162,7 +161,7 @@ FROM V_CATALOG.SCHEMATA
 WHERE
   IS_SYSTEM_SCHEMA = 'f'
 ORDER BY schema_name
-  `;
+`;
 // OR schema_name in ('v_catalog', 'v_monitor')
  
 export default {
