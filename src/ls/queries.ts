@@ -47,15 +47,16 @@ SELECT count(1) AS total
 FROM ${p => escapeTableName(p.table)};
 `;
 
+// For autocomplete
 const searchTables: IBaseQueries['searchTables'] = queryFactory`
 SELECT U.*, D.database_name AS database
   FROM (SELECT
-    T.TABLE_NAME AS label,
-    '${ContextValue.TABLE}' AS type,
-    T.TABLE_SCHEMA AS schema,
-    FALSE AS "isView",
-    'table' AS description,
-    ('"' || T.TABLE_SCHEMA || '"."' || T.TABLE_NAME || '"') as detail
+      T.TABLE_NAME AS label,
+      '${ContextValue.TABLE}' AS type,
+      T.TABLE_SCHEMA AS schema,
+      FALSE AS "isView",
+      'table' AS description,
+      ('"' || T.TABLE_SCHEMA || '"."' || T.TABLE_NAME || '"') as detail
     FROM V_CATALOG.TABLES AS T
   UNION
     SELECT
@@ -65,48 +66,63 @@ SELECT U.*, D.database_name AS database
       TRUE AS "isView",
       'view' AS description,
       ('"' || V.TABLE_SCHEMA || '"."' || V.TABLE_NAME || '"') as detail
-    FROM V_CATALOG.VIEWS as V
+    FROM V_CATALOG.VIEWS AS V
 ) AS U, V_CATALOG.DATABASES AS D
 ${p => p.search ? `WHERE (
     U.label ILIKE '%${p.search}%'
     OR U.schema ILIKE '%${p.search}%'
   )` : ''}
 ORDER BY
-  label
+  U.label
 LIMIT ${p => p.limit || 100};
 `;
 
+// For autocomplete
 const searchColumns: IBaseQueries['searchColumns'] = queryFactory`
-SELECT
-  C.COLUMN_NAME AS label,
-  '${ContextValue.COLUMN}' as type,
-  C.TABLE_NAME AS table,
-  C.DATA_TYPE AS "dataType",
-  C.CHARACTER_MAXIMUM_LENGTH::INT AS size,
-  '${p => p.database}' AS database,
-  C.TABLE_SCHEMA AS schema,
-  C.COLUMN_DEFAULT AS defaultValue,
-  C.IS_NULLABLE AS isNullable,
-  false as "isPk",
-  false as "isFk"
-FROM
-  V_CATALOG.COLUMNS C
-WHERE
-  C.IS_SYSTEM_TABLE = 'f'
+SELECT U.*, D.database_name AS database
+  FROM (SELECT
+      C.COLUMN_NAME AS label,
+      '${ContextValue.COLUMN}' as type,
+      C.TABLE_NAME AS table,
+      C.DATA_TYPE AS "dataType",
+      C.CHARACTER_MAXIMUM_LENGTH::INT AS size,
+      C.TABLE_SCHEMA AS schema,
+      C.COLUMN_DEFAULT AS defaultValue,
+      C.IS_NULLABLE AS isNullable,
+      ordinal_position,
+      false as "isPk",
+      false as "isFk"
+    FROM V_CATALOG.COLUMNS AS C
+  UNION
+    SELECT
+      V.COLUMN_NAME AS label,
+      '${ContextValue.COLUMN}' as type,
+      V.TABLE_NAME AS table,
+      V.DATA_TYPE AS "dataType",
+      V.CHARACTER_MAXIMUM_LENGTH::INT AS size,
+      V.TABLE_SCHEMA AS schema,
+      NULL AS defaultValue,
+      NULL AS isNullable,
+      ordinal_position,
+      false as "isPk",
+      false as "isFk"
+    FROM V_CATALOG.VIEW_COLUMNS AS V
+) AS U, V_CATALOG.DATABASES AS D
+WHERE 1=1
   ${p => p.tables.filter(t => !!t.label).length
-    ? `AND LOWER(C.TABLE_NAME) IN (${p.tables.filter(t => !!t.label).map(t => `'${t.label}'`.toLowerCase()).join(', ')})`
+    ? `AND LOWER(U.table) IN (${p.tables.filter(t => !!t.label).map(t => `'${t.label}'`.toLowerCase()).join(', ')})`
     : ''
   }
   ${p => p.search
     ? `AND (
-      (C.TABLE_NAME || '.' || C.COLUMN_NAME) ILIKE '%${p.search}%'
-      OR C.COLUMN_NAME ILIKE '%${p.search}%'
+      (U.table || '.' || U.label) ILIKE '%${p.search}%'
+      OR U.label ILIKE '%${p.search}%'
     )`
     : ''
   }
 ORDER BY
-  C.TABLE_NAME,
-  C.ORDINAL_POSITION
+  U.table,
+  U.ordinal_position
 LIMIT ${p => p.limit || 100}
 `;
 
@@ -124,7 +140,6 @@ WHERE
 ORDER BY
   T.TABLE_NAME
 `;
-// SELECT * FROM v_catalog.system_tables ORDER BY table_schema, table_name
 
 const fetchViews: IBaseQueries['fetchTables'] = queryFactory`
 SELECT

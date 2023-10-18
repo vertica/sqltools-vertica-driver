@@ -4,7 +4,7 @@ import { IConnectionDriver, NSDatabase, Arg0, ContextValue, MConnectionExplorer 
 import AbstractDriver from '@sqltools/base-driver';
 import QueryParser from './parser';
 import { v4 as generateId } from 'uuid';
-import { inspect } from "util";
+// import { inspect } from "util";  // For debug
 
 type DriverLib = Pool;
 type DriverOptions = any;
@@ -47,8 +47,9 @@ export default class VerticaSQL extends AbstractDriver<DriverLib, DriverOptions>
 
     for (const query of queries) {
       const res:Result = await pool.query(query);
-      console.log("Query: " + query);
-      console.log("Result: " + inspect(res.rows, { depth: null }));
+      // For debug
+      // console.log("Query: " + query);
+      // console.log("Result: " + inspect(res.rows, { depth: null }));
       const cols = this.getColumnNames(res.fields || []);
       resultsAgg.push(
         {
@@ -137,7 +138,7 @@ export default class VerticaSQL extends AbstractDriver<DriverLib, DriverOptions>
   public getStaticCompletions = async () => {
     if (this.completionsCache) return this.completionsCache;
     this.completionsCache = {};
-    const items = await this.queryResults('SELECT UPPER(keyword) AS label, UPPER(reserved) AS reserved FROM keywords;');
+    const items = await this.queryResults("SELECT UPPER(keyword) AS label, CASE WHEN reserved = 'R' THEN 'RESERVED' ELSE 'UNRESERVED' END AS reserved FROM keywords;");
 
     items.forEach((item: any) => {
       this.completionsCache[item.label] = {
@@ -146,7 +147,7 @@ export default class VerticaSQL extends AbstractDriver<DriverLib, DriverOptions>
         filterText: item.label,
         sortText: (['SELECT', 'CREATE', 'UPDATE', 'DELETE'].includes(item.label) ? '2:' : '') + item.label,
         documentation: {
-          value: `\`\`\`yaml\nWORD: ${item.label}\nRESERVED: ${item.reserved}\n\`\`\``,
+          value: `\`\`\`yaml\nWORD: ${item.label}\nTYPE: ${item.reserved}\n\`\`\``,
           kind: 'markdown'
         }
       }
