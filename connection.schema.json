@@ -2,34 +2,94 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "host": {
+    "server": {
       "title": "Server Address",
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "default": "localhost"
     },
     "port": {
       "title": "Port",
-      "type": "number"
+      "type": "number",
+      "minimum": 1,
+      "default": 5433
     },
     "database": {
       "title": "Database",
       "type": "string",
       "minLength": 1
     },
-    "user": {
+    "username": {
       "title": "Username",
       "type": "string",
       "minLength": 1
     },
-    "password": {
-      "title": "Password",
+    "usePassword": {
+      "title": "Use password",
       "type": "string",
-      "minLength": 0
+      "enum": [
+        "SQLTools Driver Credentials",
+        "Ask on connect",
+        "Use empty password",
+        "Save as plaintext in settings"
+      ],
+      "default": "SQLTools Driver Credentials"
     }
   },
   "required": [
-    "host",
+    "server",
     "port",
-    "user"
-  ]
+    "username"
+  ],
+  "dependencies": {
+    "usePassword": {
+      "oneOf": [
+        {
+          "properties": {
+            "usePassword": {
+              "enum": [
+                "Ask on connect"
+              ]
+            },
+            "askForPassword": {
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        {
+          "properties": {
+            "usePassword": {
+              "enum": [
+                "Use empty password"
+              ]
+            }
+          }
+        },
+        {
+          "properties": {
+            "usePassword": {
+              "enum": [
+                "Save as plaintext in settings"
+              ]
+            },
+            "password": {
+              "title": "Password",
+              "type": "string",
+              "minLength": 0
+            }
+          }
+        },
+        {
+          "properties": {
+            "usePassword": {
+              "enum": [
+                "SQLTools Driver Credentials"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
 }

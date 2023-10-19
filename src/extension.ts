@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { IExtension, IExtensionPlugin, IDriverExtensionApi } from '@sqltools/types';
-import { ExtensionContext } from 'vscode';
+import { ExtensionContext, authentication } from 'vscode';
 import { DRIVER_ALIASES } from './constants';
 const { publisher, name, displayName } = require('../package.json');
+const AUTHENTICATION_PROVIDER = 'sqltools-driver-credentials';
 
 export async function activate(extContext: ExtensionContext): Promise<IDriverExtensionApi> {
   const sqltools = vscode.extensions.getExtension<IExtension>('mtxr.sqltools');
@@ -43,16 +44,24 @@ export async function activate(extContext: ExtensionContext): Promise<IDriverExt
        * This hook is called before saving the connection using the assistant
        * so you can do any transformations before saving it to disk.active
        * EG: relative file path transformation, string manipulation etc
-       * Below is the exmaple for SQLite, where we save the DB path relative to workspace
-       * and later we transform it back to absolute before editing
        */
-      // if (path.isAbsolute(connInfo.database)) {
-      //   const databaseUri = Uri.file(connInfo.database);
-      //   const dbWorkspace = workspace.getWorkspaceFolder(databaseUri);
-      //   if (dbWorkspace) {
-      //     connInfo.database = `\$\{workspaceFolder:${dbWorkspace.name}\}/${workspace.asRelativePath(connInfo.database, false)}`;
-      //   }
-      // }
+      const propsToRemove = ['connectionMethod', 'id', 'usePassword'];
+      if (connInfo.usePassword) {
+        if (connInfo.usePassword.toString().toLowerCase().includes('ask')) {
+          connInfo.askForPassword = true;
+          propsToRemove.push('password');
+        } else if (connInfo.usePassword.toString().toLowerCase().includes('empty')) {
+          connInfo.password = '';
+          propsToRemove.push('askForPassword');
+        } else if (connInfo.usePassword.toString().toLowerCase().includes('save')) {
+          propsToRemove.push('askForPassword');
+        } else if (connInfo.usePassword.toString().toLowerCase().includes('secure')) {
+          propsToRemove.push('password');
+          propsToRemove.push('askForPassword');
+        }
+      }
+      propsToRemove.forEach(p => delete connInfo[p]);
+
       return connInfo;
     },
     parseBeforeEditConnection: ({ connInfo }) => {
@@ -60,15 +69,47 @@ export async function activate(extContext: ExtensionContext): Promise<IDriverExt
        * This hook is called before editing the connection using the assistant
        * so you can do any transformations before editing it.
        * EG: absolute file path transformation, string manipulation etc
-       * Below is the exmaple for SQLite, where we use relative path to save,
-       * but we transform to asolute before editing
        */
-      // if (!path.isAbsolute(connInfo.database) && /\$\{workspaceFolder:(.+)}/g.test(connInfo.database)) {
-      //   const workspaceName = connInfo.database.match(/\$\{workspaceFolder:(.+)}/)[1];
-      //   const dbWorkspace = workspace.workspaceFolders.find(w => w.name === workspaceName);
-      //   if (dbWorkspace)
-      //     connInfo.database = path.resolve(dbWorkspace.uri.fsPath, connInfo.database.replace(/\$\{workspaceFolder:(.+)}/g, './'));
-      // }
+      const formData: typeof connInfo = {
+        ...connInfo,
+      };
+
+      if (connInfo.askForPassword) {
+        formData.usePassword = 'Ask on connect';
+        delete formData.password;
+      } else if (typeof connInfo.password === 'string') {
+        delete formData.askForPassword;
+        formData.usePassword = connInfo.password ? 'Save as plaintext in settings' : 'Use empty password';
+      } else {
+        formData.usePassword = 'SQLTools Driver Credentials';
+      }
+
+      return formData;
+    },
+    resolveConnection: async ({ connInfo }) => {
+      /**
+       * This hook is called after a connection definition has been fetched
+       * from settings and is about to be used to connect.
+       */
+      if (connInfo.password === undefined && !connInfo.askForPassword) {
+        const scopes = [connInfo.name, (connInfo.username || "")];
+        let session = await authentication.getSession(
+          AUTHENTICATION_PROVIDER,
+          scopes,
+          { silent: true }
+        );
+        if (!session) {
+          session = await authentication.getSession(
+            AUTHENTICATION_PROVIDER,
+            scopes,
+            { createIfNone: true }
+          );
+        }
+        if (session) {
+          connInfo.password = session.accessToken;
+        }
+      }
+
       return connInfo;
     },
     driverAliases: DRIVER_ALIASES,
