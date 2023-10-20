@@ -1,12 +1,15 @@
 # SQLTools Vertica Driver
 
-[Vertica](https://www.vertica.com/) driver for [VS Code SQLTools](https://vscode-sqltools.mteixeira.dev/).
+[![License](https://img.shields.io/badge/License-Apache%202.0-orange.svg)](https://opensource.org/licenses/Apache-2.0)
 
-This driver supports connect to Vertica use [vertica-nodejs](https://github.com/vertica/vertica-nodejs) driver to browse and execute queries to the database
+[Vertica](https://www.vertica.com/) driver for VS Code extension [SQLTools](https://github.com/mtxr/vscode-sqltools/).
 
 ## Installation
 
-Install the driver from the VS Code Marketplace page.
+Install the driver from the VS Code Extension Marketplace page.
 
-## License
-* See [LICENSE](LICENSE)
+## Usage
+
+After installation you will be able to explore tables and views, run queries, etc. For more details see SQLTools [documentation](https://vscode-sqltools.mteixeira.dev/).
+
+Please use Github [issue page](https://github.com/vertica/sqltools-vertica-driver/issues) to submit your feedback.
