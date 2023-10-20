@@ -6,7 +6,7 @@
   "engines": {
     "vscode": "^1.42.0"
   },
-  "publisher": "Vertica",
+  "publisher": "vertica-official",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
