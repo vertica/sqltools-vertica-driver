@@ -6,10 +6,11 @@
 
 ## Installation
 
-Install the driver from the VS Code Extension Marketplace page.
+- Install the driver from the VS Code Extension Marketplace [page](https://marketplace.visualstudio.com/items?itemName=vertica-official.sqltools-vertica-driver).
+- Within Visual Studio Code, bring up the Extensions view by clicking on the Extensions icon in the Activity Bar on the side, search `@tag:sql vertica` or just `vertica`.
 
 ## Usage
 
-After installation you will be able to explore tables and views, run queries, etc. For more details see SQLTools [documentation](https://vscode-sqltools.mteixeira.dev/).
+After installation you will be able to create connections to Vertica, explore tables and views, run queries, etc. For more details see SQLTools [documentation](https://vscode-sqltools.mteixeira.dev/).
 
 Please use Github [issue page](https://github.com/vertica/sqltools-vertica-driver/issues) to submit your feedback.
