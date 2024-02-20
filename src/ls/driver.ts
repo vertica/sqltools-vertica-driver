@@ -23,6 +23,7 @@ export default class VerticaSQL extends AbstractDriver<DriverLib, DriverOptions>
       database: this.credentials.database,
       password: this.credentials.password,
       port: this.credentials.port,
+      client_label: "VSCode SQLTools Vertica driver",
     }
 
     const pool = new Pool(options);
