@@ -34,6 +34,12 @@
         "Save as plaintext in settings"
       ],
       "default": "SQLTools Driver Credentials"
+    },
+    "tlsmode": {
+      "type": "string",
+      "title": "TLS",
+      "enum": ["disable", "require", "verify-ca", "verify-full"],
+      "default": "disable"
     }
   },
   "required": [
@@ -86,6 +92,33 @@
               "enum": [
                 "SQLTools Driver Credentials"
               ]
+            }
+          }
+        }
+      ]
+    },
+    "tlsmode": {
+      "oneOf": [
+        {
+          "properties": {
+            "tlsmode": {
+              "enum": ["disable", "require"]
+            }
+          }
+        },
+        {
+          "properties": {
+            "tlsmode": {
+              "enum": ["verify-ca", "verify-full"]
+            },
+            "tls": {
+              "type": "object",
+              "title": "TLS Options",
+              "properties": {
+                "ca": {
+                  "type": "string"
+                }
+              }
             }
           }
         }

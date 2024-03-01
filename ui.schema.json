@@ -1,5 +1,14 @@
 {
-  "ui:order": ["server", "port", "database", "username", "usePassword", "password"],
+  "ui:order": ["server", "port", "database", "username", "usePassword", "password", "tlsmode", "tls"],
   "password": { "ui:widget": "password" },
-  "askForPassword": { "ui:widget": "hidden" }
+  "askForPassword": { "ui:widget": "hidden" },
+  "tlsmode": {
+    "ui:help": "• disable: connects without TLS. • require: connects using TLS without verifying the CA certificate. • verify-ca: connects using TLS and confirms that the server certificate has been signed by the certificate authority. • verify-full: connects using TLS, confirms that the server certificate has been signed by the certificate authority, and verifies that the host name matches the name provided in the server certificate."
+  },
+  "tls": {
+    "ca": {
+      "ui:help": "Optionally override the trusted CA certificates. Default is to trust the well-known CAs curated by Mozilla. Mozilla's CAs are completely replaced when CAs are explicitly specified using this option.",
+      "ui:widget": "file"
+    }
+  }
 }

@@ -24,7 +24,14 @@ export default class VerticaSQL extends AbstractDriver<DriverLib, DriverOptions>
       password: this.credentials.password,
       port: this.credentials.port,
       client_label: "VSCode SQLTools Vertica driver",
+      tls_mode: this.credentials.tlsmode,
     }
+
+    if (this.credentials.tls['ca']){
+      options['tls_trusted_certs'] = this.credentials.tls['ca'].replace(/^file:\/\//, '')
+    }
+
+    // console.log('options:', JSON.stringify(options), '\n');
 
     const pool = new Pool(options);
     console.log("start client connection ......!!!!!")
