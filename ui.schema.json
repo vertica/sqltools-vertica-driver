@@ -1,5 +1,5 @@
 {
-  "ui:order": ["server", "port", "database", "username", "usePassword", "password", "tlsmode", "tls"],
+  "ui:order": ["server", "port", "database", "username", "usePassword", "password", "tlsmode", "tls", "workload"],
   "password": { "ui:widget": "password" },
   "askForPassword": { "ui:widget": "hidden" },
   "tlsmode": {
@@ -10,5 +10,8 @@
       "ui:help": "Optionally override the trusted CA certificates. Default is to trust the well-known CAs curated by Mozilla. Mozilla's CAs are completely replaced when CAs are explicitly specified using this option.",
       "ui:widget": "file"
     }
+  },
+  "workload": {
+    "ui:help": "The name of the workload associated with this session. Valid values are workload names that already exist in a workload routing rule on the server. It will be set to the default if a workload name that doesn't exist is entered."
   }
 }

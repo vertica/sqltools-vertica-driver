@@ -40,6 +40,10 @@
       "title": "TLS",
       "enum": ["disable", "require", "verify-ca", "verify-full"],
       "default": "disable"
+    },
+    "workload": {
+      "title": "Workload",
+      "type": "string"
     }
   },
   "required": [
