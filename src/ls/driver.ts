@@ -25,7 +25,7 @@ export default class VerticaSQL extends AbstractDriver<DriverLib, DriverOptions>
       database: this.credentials.database,
       password: this.credentials.password,
       port: this.credentials.port,
-      client_label: "VSCode SQLTools Vertica driver",
+      client_label: this.credentials.label,
       tls_mode: this.credentials.tlsmode,
       workload: this.credentials.workload,
     }

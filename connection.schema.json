@@ -41,6 +41,11 @@
       "enum": ["disable", "require", "verify-ca", "verify-full"],
       "default": "disable"
     },
+    "label": {
+      "title": "Label",
+      "type": "string",
+      "default": "VSCode SQLTools Vertica driver"
+    },
     "workload": {
       "title": "Workload",
       "type": "string"

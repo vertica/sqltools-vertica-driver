@@ -1,5 +1,5 @@
 {
-  "ui:order": ["server", "port", "database", "username", "usePassword", "password", "tlsmode", "tls", "workload"],
+  "ui:order": ["server", "port", "database", "username", "usePassword", "password", "tlsmode", "tls", "label", "workload"],
   "password": { "ui:widget": "password" },
   "askForPassword": { "ui:widget": "hidden" },
   "tlsmode": {
@@ -11,7 +11,10 @@
       "ui:widget": "file"
     }
   },
+  "label": {
+    "ui:help": "Sets a label for the connection on the server. This value appears in the client_label column of the SESSIONS system table."
+  },
   "workload": {
-    "ui:help": "The name of the workload associated with this session. Valid values are workload names that already exist in a workload routing rule on the server. It will be set to the default if a workload name that doesn't exist is entered."
+    "ui:help": "The name of the workload for the session. Valid values are workload names that already exist in a workload routing rule on the server. It will be set to the default if a workload name that doesn't exist is entered."
   }
 }
