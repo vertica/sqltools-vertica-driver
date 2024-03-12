@@ -84,6 +84,8 @@ export async function activate(extContext: ExtensionContext): Promise<IDriverExt
         formData.usePassword = 'SQLTools Driver Credentials';
       }
 
+      formData.tls = formData.tls || {};
+
       return formData;
     },
     resolveConnection: async ({ connInfo }) => {
