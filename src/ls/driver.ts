@@ -30,6 +30,7 @@ export default class VerticaSQL extends AbstractDriver<DriverLib, DriverOptions>
       workload: this.credentials.workload,
     }
 
+    this.credentials.tls = this.credentials.tls || {};
     if (this.credentials.tls['ca']){
       options['tls_trusted_certs'] = this.credentials.tls['ca'].replace(/^file:\/\//, '')
     }
